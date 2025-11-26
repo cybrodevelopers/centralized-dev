@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_lint_test_model_form" model="ir.ui.view">
+        <field name="name">lint.test.model.form</field>
+        <field name="model">lint.test.model</field>
+        <field name="arch" type="xml">
+            <form string="Test Model">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <field name="value"/>
+                        <field name="active" widget="boolean_toggle"/>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_lint_test_model_tree" model="ir.ui.view">
+        <field name="name">lint.test.model.tree</field>
+        <field name="model">lint.test.model</field>
+        <field name="arch" type="xml">
+            <tree string="Test Model">
+                <field name="name"/>
+                <field name="value"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_lint_test_model" model="ir.actions.act_window">
+        <field name="name">Test Models</field>
+        <field name="res_model">lint.test.model</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_lint_test_root" name="Lint Test" sequence="10"/>
+    <menuitem id="menu_lint_test_model" parent="menu_lint_test_root" action="action_lint_test_model" sequence="1"/>
+</odoo>

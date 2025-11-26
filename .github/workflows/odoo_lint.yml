@@ -1,0 +1,51 @@
+name: Odoo Code Quality Check
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Linters
+        run: |
+          pip install flake8 pylint pylint-odoo
+
+      - name: Run Flake8
+        run: flake8 .
+
+      - name: Run Pylint with Odoo plugin
+        run: pylint --load-plugins=pylint_odoo .
+
+      - name: Push latest commit to centralized-base_modules (SAFE APPEND)
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          REPO_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          REMOTE_URL="https://x-access-token:${REPO_TOKEN}@github.com/cybrodevelopers/centralized-base_modules.git"
+          git remote add target_repo $REMOTE_URL
+
+          echo "Fetching target repository main branch..."
+          git fetch target_repo main:target_repo_main
+
+          git checkout $GITHUB_SHA
+
+          echo "Merging target_repo_main into current commit..."
+          git merge target_repo_main --no-ff -m "Merge from centralized-dev after successful linting of $GITHUB_SHA"
+
+          echo "Pushing the merge commit to centralized-base_modules/main"
+          git push target_repo HEAD:refs/heads/main

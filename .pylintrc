@@ -1,0 +1,21 @@
+[MASTER]
+ignore=__init__.py
+extension-pkg-whitelist=odoo
+ignored-modules=odoo,odoo.exceptions
+
+[MESSAGES CONTROL]
+disable =
+    missing-module-docstring,
+    too-few-public-methods,
+    attribute-string-redundant,
+    consider-using-f-string,
+    unnecessary-pass,
+    import-error,
+    manifest-required-author,
+    manifest-deprecated-key,
+    manifest-superfluous-key,
+    prefer-env-translation
+
+[FORMAT]
+max-line-length = 120
+
