@@ -45,7 +45,7 @@ jobs:
           git checkout $GITHUB_SHA
 
           echo "Merging target_repo_main into current commit..."
-          git merge target_repo_main --no-ff -m "Merge from centralized-dev after successful linting of $GITHUB_SHA"
+          git merge target_repo_main --no-ff --allow-unrelated-histories -m "Merge from centralized-dev after successful linting of $GITHUB_SHA"
 
           echo "Pushing the merge commit to centralized-base_modules/main"
           git push target_repo HEAD:refs/heads/main
