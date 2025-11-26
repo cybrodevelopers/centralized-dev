@@ -23,7 +23,7 @@ class ORMSafeModel(models.Model):
     def _compute_related_name(self):
         """Compute the related name by prefixing."""
         for record in self:
-            record.related_name = _("SAFE: %s") % record.name
+            record.related_name = _(f"SAFE: {record.name}")
 
     def action_perform_safe_update(self):
         """
