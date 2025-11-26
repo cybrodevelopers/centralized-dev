@@ -8,7 +8,7 @@
     "maintainer": "",
     "website": "https://www.yourcompany.com",
     "depends": ["base"],
-    "data": ["security/ir.model.access.csv", "views/test_module_views.xml"],
+    "data": ["security/ir.model.access.csv", "views/test_model_views.xml"],
     "license": "LGPL-3",
     "installable": True,
     "auto_install": False,
