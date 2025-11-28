@@ -29,23 +29,32 @@ jobs:
       - name: Run Pylint with Odoo plugin
         run: pylint --load-plugins=pylint_odoo .
 
-      - name: Push latest commit to centralized-base_modules (SAFE APPEND)
+      - name: Push latest commit to centralized-base_modules (ROBUST AUTH)
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           REPO_TOKEN: ${{ secrets.TOKEN_GH }}
         run: |
+          # 1. Configure the PAT as a credential helper.
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          REMOTE_URL="https://cybrodevelopers:${REPO_TOKEN}@github.com/cybrodevelopers/centralized-base_modules.git"
-          git remote add target_repo $REMOTE_URL
+          git config credential.helper "store --file /tmp/git-credentials"
+          echo "https://${REPO_TOKEN}:@github.com" > /tmp/git-credentials
 
+          # 2. Define the Target URL (without the token in the URL itself)
+          TARGET_REPO_URL="https://github.com/cybrodevelopers/centralized-base_modules.git"
+          git remote add target_repo $TARGET_REPO_URL
+
+          # 3. Fetch, Checkout, and Merge
           echo "Fetching target repository main branch..."
           git fetch target_repo main:target_repo_main
-
           git checkout $GITHUB_SHA
 
-          echo "Merging target_repo_main into current commit, prioritizing the current working changes..."
+          echo "Merging target_repo_main into current commit..."
           git merge -X ours target_repo_main --no-ff --allow-unrelated-histories -m "Merge from centralized-dev after successful linting of $GITHUB_SHA"
 
+          # 4. Push
           echo "Pushing the merge commit to centralized-base_modules/main"
           git push target_repo HEAD:refs/heads/main
+
+          # 5. Clean up
+          rm -f /tmp/git-credentials
