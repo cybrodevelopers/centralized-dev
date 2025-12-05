@@ -29,7 +29,8 @@ jobs:
       - name: Run Pylint with Odoo plugin
         run: pylint --load-plugins=pylint_odoo .
 
-      - name: MERGE Histories (Local Git Step)
+      - name: MERGE Histories (Prepare Files)
+        id: merge
         if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           REPO_TOKEN: ${{ secrets.TOKEN_GH }}
@@ -48,12 +49,28 @@ jobs:
           echo "Merging target_repo_main into current commit..."
           git merge -X ours target_repo_main --no-ff --allow-unrelated-histories -m "Merge from centralized-dev after successful linting of $GITHUB_SHA"
 
-      - name: PUSH to External Repo (Dedicated Action)
-        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: ad-m/github-push-action@master
+          echo "::set-output name=merged_files_ready::true"
+
+      - name: PUSH to External Repo (Checkout Strategy)
+        if: steps.merge.outputs.merged_files_ready == 'true'
+        uses: actions/checkout@v4
         with:
-          github_token: ${{ secrets.TOKEN_GH }}
           repository: cybrodevelopers/centralized-base_modules
-          branch: main
-          force: true
-          tags: false
+          ref: main
+          token: ${{ secrets.TOKEN_GH }}
+          path: centralized-base_modules
+
+      - name: Commit and Push Changes
+        if: steps.merge.outputs.merged_files_ready == 'true'
+        run: |
+          cd centralized-base_modules
+
+          rsync -av --exclude '.git' ../ ./
+
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .
+          git commit -m "Automated CI Sync: Merged changes from centralized-dev" || true # '|| true' handles 'nothing to commit'
+
+          echo "Pushing changes to centralized-base_modules/main"
+          git push
