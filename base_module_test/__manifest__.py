@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Base Module Test",
+    "name": "Base Module Test Ultra",
     "version": "19.0.1.0.0",
     "category": "Tools",
     "summary": "A sample module demonstrating strict linting compliance",
