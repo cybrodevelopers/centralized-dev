@@ -32,7 +32,7 @@ class ORMSafeModel(models.Model):
         (Avoids linting error for unnecessary ORM loop).
         """
         # This is safe and efficient
-        self.write({"is_active": False})
+        self.is_active = False
         return True
 
     def _execute_safe_sql(self):
