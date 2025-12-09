@@ -26,7 +26,6 @@ class LintTestModel(models.Model):
     def _check_value(self):
         """Ensure the value is positive."""
         for record in self:
-            print("test")
             if record.value < 0:
                 raise UserError(_("The value must be positive."))
 
