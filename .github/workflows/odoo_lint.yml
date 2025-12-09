@@ -31,7 +31,7 @@ jobs:
 
       - name: MERGE Histories (Prepare Files)
         id: merge
-        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/dev'
         env:
           REPO_TOKEN: ${{ secrets.TOKEN_GH }}
         run: |
