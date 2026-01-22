@@ -30,7 +30,7 @@ class LintTestModel(models.Model):
                 raise UserError(_("The value must be positive."))
 
     def action_reset_value(self):
-        """Reset the value to zero and log the action."""
+        """Reset the value to zero and log action."""
         self.ensure_one()
         _logger.info("Resetting value for record %s", self.name)
         self.write({"value": 0.0})
